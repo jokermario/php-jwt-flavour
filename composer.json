@@ -1,6 +1,6 @@
 {
     "name": "jokermario/php-jwt-flavour",
-    "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
+    "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. This flavour includes a unique identifier in the JWT Header",
     "homepage": "https://github.com/jokermario/php-jwt-flavour",
     "keywords": [
         "php",
