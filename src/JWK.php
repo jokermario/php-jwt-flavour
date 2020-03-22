@@ -1,6 +1,6 @@
 <?php
 
-namespace Firebase\JWT;
+namespace Jokermario\JWT;
 
 use DomainException;
 use UnexpectedValueException;

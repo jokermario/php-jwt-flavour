@@ -3,9 +3,9 @@
 [![Total Downloads](https://poser.pugx.org/firebase/php-jwt/downloads)](https://packagist.org/packages/firebase/php-jwt)
 [![License](https://poser.pugx.org/firebase/php-jwt/license)](https://packagist.org/packages/firebase/php-jwt)
 
-PHP-JWT
+PHP-JWT-FLAVOUR
 =======
-A simple library to encode and decode JSON Web Tokens (JWT) in PHP, conforming to [RFC 7519](https://tools.ietf.org/html/rfc7519).
+A simple library to encode and decode JSON Web Tokens (JWT) in PHP, conforming to [RFC 7519](https://tools.ietf.org/html/rfc7519). This flavour includes a unique identifier in the JWT Header
 
 Installation
 ------------
@@ -13,14 +13,14 @@ Installation
 Use composer to manage your dependencies and download PHP-JWT:
 
 ```bash
-composer require firebase/php-jwt
+composer require jokermario/php-jwt-flavour
 ```
 
 Example
 -------
 ```php
 <?php
-use \Firebase\JWT\JWT;
+use \Jokermario\JWT\JWT;
 
 $key = "example_key";
 $payload = array(

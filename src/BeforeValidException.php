@@ -1,5 +1,5 @@
 <?php
-namespace Firebase\JWT;
+namespace Jokermario\JWT;
 
 class BeforeValidException extends \UnexpectedValueException
 {

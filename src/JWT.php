@@ -1,6 +1,6 @@
 <?php
 
-namespace Firebase\JWT;
+namespace Jokermario\JWT;
 
 use \DomainException;
 use \InvalidArgumentException;
@@ -60,13 +60,14 @@ class JWT
      * @param array                     $allowed_algs   List of supported verification algorithms
      *                                                  Supported algorithms are 'ES256', 'HS256', 'HS384', 'HS512', 'RS256', 'RS384', and 'RS512'
      *
-     * @return object The JWT's payload as a PHP object
+     * @return array The JWT's header and payload as a PHP array of object
      *
      * @throws UnexpectedValueException     Provided JWT was invalid
      * @throws SignatureInvalidException    Provided JWT was invalid because the signature verification failed
      * @throws BeforeValidException         Provided JWT is trying to be used before it's eligible as defined by 'nbf'
      * @throws BeforeValidException         Provided JWT is trying to be used before it's been created as defined by 'iat'
      * @throws ExpiredException             Provided JWT has since expired, as defined by the 'exp' claim
+     * @throws IdentityException            Provided JWT does not have an identifier, as defined by the 'idt' claim in the header
      *
      * @uses jsonDecode
      * @uses urlsafeB64Decode
@@ -86,7 +87,7 @@ class JWT
         if (null === ($header = static::jsonDecode(static::urlsafeB64Decode($headb64)))) {
             throw new UnexpectedValueException('Invalid header encoding');
         }
-        if (null === $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64))) {
+        if (null === ($payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64)))) {
             throw new UnexpectedValueException('Invalid claims encoding');
         }
         if (false === ($sig = static::urlsafeB64Decode($cryptob64))) {
@@ -130,6 +131,12 @@ class JWT
             );
         }
 
+        //Check that the identity of this token was created. This helps
+        //uniquely identify the token
+        if (!isset($header->idt)){
+            throw new IdentityException('idt may not be empty');
+        }
+
         // Check that this token has been created before 'now'. This prevents
         // using tokens that have been created for later use (and haven't
         // correctly used the nbf claim).
@@ -144,7 +151,7 @@ class JWT
             throw new ExpiredException('Expired token');
         }
 
-        return $payload;
+        return [$header, $payload];
     }
 
     /**
@@ -165,7 +172,7 @@ class JWT
      */
     public static function encode($payload, $key, $alg = 'HS256', $keyId = null, $head = null)
     {
-        $header = array('typ' => 'JWT', 'alg' => $alg);
+        $header = array('typ' => 'JWT', 'alg' => $alg, 'idt' => self::uuid());
         if ($keyId !== null) {
             $header['kid'] = $keyId;
         }
@@ -508,5 +515,21 @@ class JWT
         }
 
         return array($pos, $data);
+    }
+
+    /**
+     * Generates a universally unique id
+     *
+     * @return string
+     */
+    private static function uuid(){
+        try {
+            $data = random_bytes(16);
+            $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+            $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+            return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4)).'-'.self::urlsafeB64Encode(time());
+        } catch (\Exception $e) {
+            throw new RandomBytesException($e->getMessage());
+        }
     }
 }
