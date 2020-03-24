@@ -172,7 +172,7 @@ class JWT
      */
     public static function encode($payload, $key, $alg = 'HS256', $keyId = null, $head = null)
     {
-        $header = array('typ' => 'JWT', 'alg' => $alg, 'idt' => self::uuid());
+        $header = array('typ' => 'SJWT', 'alg' => $alg, 'idt' => self::uuid());
         if ($keyId !== null) {
             $header['kid'] = $keyId;
         }
