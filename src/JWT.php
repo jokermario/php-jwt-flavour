@@ -165,7 +165,7 @@ class JWT
      * @param mixed         $keyId
      * @param array         $head       An array with header elements to attach
      *
-     * @return string A signed JWT
+     * @return array An array which contains a signed JWT and a header value for idt
      *
      * @uses jsonEncode
      * @uses urlsafeB64Encode
@@ -187,7 +187,7 @@ class JWT
         $signature = static::sign($signing_input, $key, $alg);
         $segments[] = static::urlsafeB64Encode($signature);
 
-        return implode('.', $segments);
+        return [implode('.', $segments), $header['idt']];
     }
 
     /**
